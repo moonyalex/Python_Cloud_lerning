@@ -1,58 +1,61 @@
 import tkinter as tk
 
-expression = ""
 
-def press(char):
-    global expression
-    expression += char
-    label.config(text=expression)
+class Calculator:
+    def __init__(self, root):
+        self.root = root
+        self.expression = ""
+        self.setup_ui()
 
-def calculate():
-    global expression
-    result = eval(expression)
-    label.config(text=result)
-    expression = str(result)
+    def setup_ui(self):
+
+        self.root.geometry("400x500")
+        self.root.configure(bg="#1e1e1e")
+        self.root.title("Калькулятор")
+
+        self.label = tk.Label(self.root,
+                         text="0",
+                         font=("Arial", 32),
+                         anchor="e",
+                         bg="#1e1e1e",
+                         fg="#ffffff",
+                         width=15
+                         )
+        self.label.grid(row=0, columnspan=4)
+
+        buttons = [
+            ["C", "(", ")", "%"],
+            ["7", "8", "9", "/"],
+            ["4", "5", "6", "*"],
+            ["1", "2", "3", "-"],
+            ["0", ".", "=", "+"],
+        ]
+
+        for row_ind, row in enumerate(buttons):
+            for col_idx, char in enumerate(row):
+                cmd = self.calculate if char == '=' else lambda c=char: self.press(c)
+                btn = tk.Button(self.root,
+                                text=char,
+                                font=("Arial", 18),  # шрифт и размер
+                                bg="#333333",  # цвет кнопки
+                                fg="white",  # цвет текста
+                                width=5,  # ширина в символах
+                                height=2,  # высота
+                                relief="flat",  # стиль границы: flat/raised/sunken/groove
+                                borderwidth=0,
+                                command=cmd)
+                btn.grid(row=row_ind+1, column=col_idx, padx=5, pady=5)
+
+
+    def press(self, char):
+        self.expression += char
+        self.label.config(text=self.expression)
+
+    def calculate(self):
+        result = eval(self.expression)
+        self.label.config(text=result)
+        self.expression = str(result)
 
 root = tk.Tk()
-
-root.title("Калькулятор")
-
-label = tk.Label(root, text="0")
-label.grid(row=0,columnspan=4)
-
-button0 = tk.Button(root, text="0", command=lambda: press("0"))
-button_point = tk.Button(root, text=".", command=lambda: press("."))
-button_equals = tk.Button(root, text="=", command=calculate)
-button_plus = tk.Button(root, text="+", command=lambda: press("+"))
-button1 = tk.Button(root, text="1", command=lambda: press("1"))
-button2 = tk.Button(root, text="2", command=lambda: press("2"))
-button3 = tk.Button(root, text="3", command=lambda: press("3"))
-button_minus = tk.Button(root, text="-", command=lambda: press("-"))
-button4 = tk.Button(root, text="4", command=lambda: press("4"))
-button5 = tk.Button(root, text="5", command=lambda: press("5"))
-button6 = tk.Button(root, text="6", command=lambda: press("6"))
-button_multiply = tk.Button(root, text="*", command=lambda: press("*"))
-button7 = tk.Button(root, text="7", command=lambda: press("7"))
-button8 = tk.Button(root, text="8", command=lambda: press("8"))
-button9 = tk.Button(root, text="9", command=lambda: press("9"))
-button_divide = tk.Button(root, text="/", command=lambda: press("/"))
-
-button7.grid(row=1, column=0)
-button8.grid(row=1, column=1)
-button9.grid(row=1, column=2)
-button_divide.grid(row=1, column=3)
-button4.grid(row=2, column=0)
-button5.grid(row=2, column=1)
-button6.grid(row=2, column=2)
-button_multiply.grid(row=2, column=3)
-button1.grid(row=3, column=0)
-button2.grid(row=3, column=1)
-button3.grid(row=3, column=2)
-button_minus.grid(row=3, column=3)
-button0.grid(row=4, column=0)
-button_point.grid(row=4, column=1)
-button_equals.grid(row=4, column=2)
-button_plus.grid(row=4, column=3)
-
-
+calc = Calculator(root)
 root.mainloop()
