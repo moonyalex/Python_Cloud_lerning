@@ -33,7 +33,12 @@ class Calculator:
 
         for row_ind, row in enumerate(buttons):
             for col_idx, char in enumerate(row):
-                cmd = self.calculate if char == '=' else lambda c=char: self.press(c)
+                if char == "=":
+                    cmd = self.calculate
+                elif char =="C":
+                    cmd = self.clear
+                else:
+                    cmd = lambda c=char: self.press(c)
                 btn = tk.Button(self.root,
                                 text=char,
                                 font=("Arial", 18),  # шрифт и размер
@@ -51,10 +56,19 @@ class Calculator:
         self.expression += char
         self.label.config(text=self.expression)
 
+    def clear(self):
+        self.expression = ""
+        self.label.config(text="0")
+
     def calculate(self):
-        result = eval(self.expression)
-        self.label.config(text=result)
-        self.expression = str(result)
+        try:
+            result = eval(self.expression)
+            self.label.config(text=result)
+            self.expression = str(result)
+        except:
+            self.label.config(text="Ошибка")
+            self.expression = ""
+
 
 root = tk.Tk()
 calc = Calculator(root)
